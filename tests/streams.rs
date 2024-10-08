@@ -15,6 +15,7 @@ use rrtk::streams::converters::*;
 use rrtk::streams::flow::*;
 use rrtk::streams::logic::*;
 use rrtk::streams::math::*;
+use rrtk::streams::simple_kalman_filter::*;
 use rrtk::streams::*;
 use rrtk::*;
 #[cfg(feature = "std")]

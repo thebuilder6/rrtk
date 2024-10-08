@@ -23,6 +23,7 @@ pub mod converters;
 pub mod flow;
 pub mod logic;
 pub mod math;
+pub mod simple_kalman_filter;
 ///Returns the output of whichever input has the latest time.
 pub struct Latest<T, const C: usize, E: Copy + Debug> {
     inputs: [InputGetter<T, E>; C],

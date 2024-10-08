@@ -724,3 +724,38 @@ fn none_getter() {
     <NoneGetter as Updatable<()>>::update(&mut getter).unwrap();
     assert_eq!(<NoneGetter as Getter<(), ()>>::get(&getter), Ok(None));
 }
+#[test]
+fn simple_kalman_filter() {
+    use rrtk::streams::simple_kalman_filter::SimpleKalmanFilter;
+    use rrtk::streams::Updatable;
+
+    // Create a SimpleKalmanFilter with initial estimate 0, error 1, and process noise 0.1
+    let mut filter = SimpleKalmanFilter::new(0.0, 1.0, 0.1);
+
+    // Test initial state
+    assert_eq!(filter.get().unwrap().unwrap().value, 0.0);
+
+    // Update with a measurement of 1.0 and measurement noise of 0.5
+    filter.set_measurement(1.0, 0.5).unwrap();
+    filter.update().unwrap();
+
+    // The estimate should move towards 1.0 but not reach it due to uncertainty
+    let first_estimate = filter.get().unwrap().unwrap().value;
+    assert!(first_estimate > 0.0 && first_estimate < 1.0);
+
+    // Update again with the same measurement
+    filter.set_measurement(1.0, 0.5).unwrap();
+    filter.update().unwrap();
+
+    // The estimate should be closer to 1.0 now
+    let second_estimate = filter.get().unwrap().unwrap().value;
+    assert!(second_estimate > first_estimate && second_estimate < 1.0);
+
+    // Test with a different measurement
+    filter.set_measurement(2.0, 0.5).unwrap();
+    filter.update().unwrap();
+
+    // The estimate should move towards 2.0
+    let third_estimate = filter.get().unwrap().unwrap().value;
+    assert!(third_estimate > second_estimate && third_estimate < 2.0);
+}
